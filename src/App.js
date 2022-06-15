@@ -4,11 +4,26 @@ import { useState } from "react";
 import Countdown from "react-countdown";
 
 export default function App() {
-  const [candA, setCandA] = useState();
-  const [candB, setCandB] = useState();
-  const [candC, setCandC] = useState();
-  const [candD, setCandD] = useState();
-  const [candE, setCandE] = useState();
+  const [candA, setCandA] = useState(Number(0));
+  const [prevA, setPrevA] = useState(Number(0));
+  const [backA, setBackA] = useState(false);
+
+  const [candB, setCandB] = useState(Number(0));
+  const [prevB, setPrevB] = useState(Number(0));
+  const [backB, setBackB] = useState(false);
+
+  const [candC, setCandC] = useState(Number(0));
+  const [prevC, setPrevC] = useState(Number(0));
+  const [backC, setBackC] = useState(false);
+
+  const [candD, setCandD] = useState(Number(0));
+  const [prevD, setPrevD] = useState(Number(0));
+  const [backD, setBackD] = useState(false);
+
+  const [candE, setCandE] = useState(Number(0));
+  const [prevE, setPrevE] = useState(Number(0));
+  const [backE, setBackE] = useState(false);
+
   const [winner, setWinner] = useState();
   const [d, setD] = useState(Date.now());
 
@@ -34,34 +49,107 @@ export default function App() {
       alert("Candidate E has won with " + winner + " votes.");
     }
   };
+
+  // Calculation of votes of all candidates - Qvoting
   const [votesA, setVotesA] = useState(Number(0));
   const [votesB, setVotesB] = useState(Number(0));
   const [votesC, setVotesC] = useState(Number(0));
   const [votesD, setVotesD] = useState(Number(0));
   const [votesE, setVotesE] = useState(Number(0));
+  const [RemainingCredits, setReaminingCredits] = useState(Number(20));
+  const [totalCredit, setTotalCredit] = useState(Number(20));
+  
+  const inputCreditA = (e) => {
+    var tar = Number(e.target.value);
+    if(tar == 0 && backA == true){
+      setReaminingCredits(Number(RemainingCredits) + Number(prevA));
+      setBackA(false);
 
-  // let votes = {
-  //   A: 0,
-  //   B: 0,
-  //   C: 0,
-  //   D: 0,
-  //   E: 0
-  // };
-  const inputCreditA = (event) => {
-    setCandA(Number(event.target.value));
+    }
+    else if(RemainingCredits - tar**2 >= 0){
+      setCandA(tar);
+      setBackA(true);
+      setReaminingCredits(Number(RemainingCredits) - tar**2);
+      setPrevA(tar**2);
+    }
+    else{
+      setCandA(0);
+      alert("You have exceeded the remaining credits, please reduce the number of votes");
+    }
   };
-  const inputCreditB = (event) => {
-    setCandB(Number(event.target.value));
+  const inputCreditB = (e) => {
+    var tar = Number(e.target.value);
+    if(tar == 0 && backB == true){
+      setReaminingCredits(Number(RemainingCredits) + Number(prevB));
+      setBackB(false);
+    }
+    else if(RemainingCredits - tar**2 >= 0){
+      setCandB(tar);
+      setBackB(true);
+      setReaminingCredits(Number(RemainingCredits) - tar**2);
+      setPrevB(tar**2);
+    }
+    else{
+      setCandB(0);
+      alert("You have exceeded the remaining credits, please reduce the number of votes");
+    }
   };
-  const inputCreditC = (event) => {
-    setCandC(Number(event.target.value));
+  const inputCreditC = (e) => {
+    var tar = Number(e.target.value);
+    if(tar == 0 && backC == true){
+      setReaminingCredits(Number(RemainingCredits) + Number(prevC));
+      setBackC(false);
+    }
+    else if(RemainingCredits - tar**2 >= 0){
+      setCandC(tar);
+      setBackC(true);
+      setReaminingCredits(Number(RemainingCredits) - tar**2);
+      setPrevC(tar**2);
+    }
+    else{
+      setCandC(0);
+      alert("You have exceeded the remaining credits, please reduce the number of votes");
+    }
   };
-  const inputCreditD = (event) => {
-    setCandD(Number(event.target.value));
+  const inputCreditD = (e) => {
+    var tar = Number(e.target.value);
+    if(tar == 0 && backD == true){
+      setReaminingCredits(Number(RemainingCredits) + Number(prevD));
+      setBackD(false);
+    }
+    else if(RemainingCredits - tar**2 >= 0){
+      setCandD(tar);
+      setBackD(true);
+      setReaminingCredits(Number(RemainingCredits) - tar**2);
+      setPrevD(tar**2);
+    }
+    else{
+      setCandD(0);
+      alert("You have exceeded the remaining credits, please reduce the number of votes");
+    }
   };
-  const inputCreditE = (event) => {
-    setCandE(Number(event.target.value));
+  const inputCreditE = (e) => {
+    var tar = Number(e.target.value);
+    if(tar == 0 && backE == true){
+      setReaminingCredits(Number(RemainingCredits) + Number(prevE));
+      setBackE(false);
+    }
+    else if(RemainingCredits - tar**2 >= 0){
+      setCandE(tar);
+      setBackE(true);
+      setReaminingCredits(Number(RemainingCredits) - tar**2);
+      setPrevE(tar**2);
+    }
+    else{
+      setCandE(0);
+      alert("You have exceeded the remaining credits, please reduce the number of votes");
+    }
   };
+
+
+
+  
+  
 
   const checkQv = (event) => {
     alert("Submitted!");
@@ -74,11 +162,11 @@ export default function App() {
     if (total > 20) {
       alert("All credits sum exceeded the total credits, pls fill again!");
     } else {
-      setVotesA(votesA + Math.sqrt(candA));
-      setVotesB(votesB + Math.sqrt(candB));
-      setVotesC(votesC + Math.sqrt(candC));
-      setVotesD(votesD + Math.sqrt(candD));
-      setVotesE(votesE + Math.sqrt(candE));
+      setVotesA(votesA + candA);
+      setVotesB(votesB + candB);
+      setVotesC(votesC + candC);
+      setVotesD(votesD + candD);
+      setVotesE(votesE + candE);
     }
     event.preventDefault();
   };
@@ -86,6 +174,7 @@ export default function App() {
     <div className="App">
       <h1> Quadratic Voting </h1>
       <h4> Total Credits 20</h4>
+      <h4> Remaining Credits {RemainingCredits}</h4>
       <h5> Please give credits to the following candidates:-</h5>
       <form onSubmit={checkQv}>
         <label>
@@ -94,8 +183,8 @@ export default function App() {
           <input
             type="number"
             min="0"
-            max="20"
-            placeholder="creditA"
+            max={Math.sqrt(totalCredit)}
+            placeholder="VotesA"
             name="Voter"
             value={candA}
             onChange={inputCreditA}
@@ -108,8 +197,8 @@ export default function App() {
           <input
             type="number"
             min="0"
-            max="20"
-            placeholder="creditB"
+            max={Math.sqrt(totalCredit)}
+            placeholder="VotesB"
             name="Voter"
             value={candB}
             onChange={inputCreditB}
@@ -122,8 +211,8 @@ export default function App() {
           <input
             type="number"
             min="0"
-            max="20"
-            placeholder="creditC"
+            max={Math.sqrt(totalCredit)}
+            placeholder="VotesC"
             name="Voter"
             value={candC}
             onChange={inputCreditC}
@@ -136,8 +225,8 @@ export default function App() {
           <input
             type="number"
             min="0"
-            max="20"
-            placeholder="creditD"
+            max={Math.sqrt(totalCredit)}
+            placeholder="VotesD"
             name="Voter"
             value={candD}
             onChange={inputCreditD}
@@ -150,8 +239,8 @@ export default function App() {
           <input
             type="number"
             min="0"
-            max="20"
-            placeholder="creditE"
+            max={Math.sqrt(totalCredit)}
+            placeholder="VotesE"
             name="Voter"
             value={candE}
             onChange={inputCreditE}
@@ -162,7 +251,7 @@ export default function App() {
       </form>
       <h3>{formCompletion}</h3>
       <div>
-        <Countdown date={d + 1000 * 60 * 60 * 18}>
+        <Countdown date={d + 60000}>
           <Completed />
         </Countdown>
       </div>
