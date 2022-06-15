@@ -58,98 +58,92 @@ export default function App() {
   const [votesE, setVotesE] = useState(Number(0));
   const [RemainingCredits, setReaminingCredits] = useState(Number(20));
   const [totalCredit, setTotalCredit] = useState(Number(20));
-  
+
   const inputCreditA = (e) => {
     var tar = Number(e.target.value);
-    if(tar == 0 && backA == true){
+    if (tar == 0 && backA == true) {
       setReaminingCredits(Number(RemainingCredits) + Number(prevA));
       setBackA(false);
-
-    }
-    else if(RemainingCredits - tar**2 >= 0){
+    } else if (RemainingCredits - tar ** 2 >= 0) {
       setCandA(tar);
       setBackA(true);
-      setReaminingCredits(Number(RemainingCredits) - tar**2);
-      setPrevA(tar**2);
-    }
-    else{
+      setReaminingCredits(Number(RemainingCredits) - tar ** 2);
+      setPrevA(tar ** 2);
+    } else {
       setCandA(0);
-      alert("You have exceeded the remaining credits, please reduce the number of votes");
+      alert(
+        "You have exceeded the remaining credits, please reduce the number of votes"
+      );
     }
   };
   const inputCreditB = (e) => {
     var tar = Number(e.target.value);
-    if(tar == 0 && backB == true){
+    if (tar == 0 && backB == true) {
       setReaminingCredits(Number(RemainingCredits) + Number(prevB));
       setBackB(false);
-    }
-    else if(RemainingCredits - tar**2 >= 0){
+    } else if (RemainingCredits - tar ** 2 >= 0) {
       setCandB(tar);
       setBackB(true);
-      setReaminingCredits(Number(RemainingCredits) - tar**2);
-      setPrevB(tar**2);
-    }
-    else{
+      setReaminingCredits(Number(RemainingCredits) - tar ** 2);
+      setPrevB(tar ** 2);
+    } else {
       setCandB(0);
-      alert("You have exceeded the remaining credits, please reduce the number of votes");
+      alert(
+        "You have exceeded the remaining credits, please reduce the number of votes"
+      );
     }
   };
   const inputCreditC = (e) => {
     var tar = Number(e.target.value);
-    if(tar == 0 && backC == true){
+    if (tar == 0 && backC == true) {
       setReaminingCredits(Number(RemainingCredits) + Number(prevC));
       setBackC(false);
-    }
-    else if(RemainingCredits - tar**2 >= 0){
+    } else if (RemainingCredits - tar ** 2 >= 0) {
       setCandC(tar);
       setBackC(true);
-      setReaminingCredits(Number(RemainingCredits) - tar**2);
-      setPrevC(tar**2);
-    }
-    else{
+      setReaminingCredits(Number(RemainingCredits) - tar ** 2);
+      setPrevC(tar ** 2);
+    } else {
       setCandC(0);
-      alert("You have exceeded the remaining credits, please reduce the number of votes");
+      alert(
+        "You have exceeded the remaining credits, please reduce the number of votes"
+      );
     }
   };
   const inputCreditD = (e) => {
     var tar = Number(e.target.value);
-    if(tar == 0 && backD == true){
+    if (tar == 0 && backD == true) {
       setReaminingCredits(Number(RemainingCredits) + Number(prevD));
       setBackD(false);
-    }
-    else if(RemainingCredits - tar**2 >= 0){
+    } else if (RemainingCredits - tar ** 2 >= 0) {
       setCandD(tar);
       setBackD(true);
-      setReaminingCredits(Number(RemainingCredits) - tar**2);
-      setPrevD(tar**2);
-    }
-    else{
+      setReaminingCredits(Number(RemainingCredits) - tar ** 2);
+      setPrevD(tar ** 2);
+    } else {
       setCandD(0);
-      alert("You have exceeded the remaining credits, please reduce the number of votes");
+      alert(
+        "You have exceeded the remaining credits, please reduce the number of votes"
+      );
     }
   };
   const inputCreditE = (e) => {
     var tar = Number(e.target.value);
-    if(tar == 0 && backE == true){
+    if (tar == 0 && backE == true) {
       setReaminingCredits(Number(RemainingCredits) + Number(prevE));
       setBackE(false);
-    }
-    else if(RemainingCredits - tar**2 >= 0){
+    } else if (RemainingCredits - tar ** 2 >= 0) {
       setCandE(tar);
       setBackE(true);
-      setReaminingCredits(Number(RemainingCredits) - tar**2);
-      setPrevE(tar**2);
-    }
-    else{
+      setReaminingCredits(Number(RemainingCredits) - tar ** 2);
+      setPrevE(tar ** 2);
+    } else {
       setCandE(0);
-      alert("You have exceeded the remaining credits, please reduce the number of votes");
+      alert(
+        "You have exceeded the remaining credits, please reduce the number of votes"
+      );
     }
   };
-
-
-
-  
-  
 
   const checkQv = (event) => {
     alert("Submitted!");
@@ -189,6 +183,7 @@ export default function App() {
             value={candA}
             onChange={inputCreditA}
           />
+          <span> Credits: {candA ** 2}</span>
         </label>
         <br />
         <label>
@@ -203,6 +198,7 @@ export default function App() {
             value={candB}
             onChange={inputCreditB}
           />
+          <span> Credits: {candB ** 2}</span>
         </label>
         <br />
         <label>
@@ -217,6 +213,7 @@ export default function App() {
             value={candC}
             onChange={inputCreditC}
           />
+          <span> Credits: {candC ** 2}</span>
         </label>
         <br />
         <label>
@@ -231,6 +228,7 @@ export default function App() {
             value={candD}
             onChange={inputCreditD}
           />
+          <span> Credits: {candD ** 2}</span>
         </label>
         <br />
         <label>
@@ -245,6 +243,7 @@ export default function App() {
             value={candE}
             onChange={inputCreditE}
           />
+          <span> Credits: {candE ** 2}</span>
         </label>
         <br />
         <input type="submit" value="Submit" disabled={button} />
