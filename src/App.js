@@ -2,6 +2,7 @@ import React from "react";
 import "./App.css";
 import { useState } from "react";
 import Countdown from "react-countdown";
+import axios from "axios";
 
 export default function App() {
   const [candA, setCandA] = useState(Number(0));
@@ -24,6 +25,12 @@ export default function App() {
   const [prevE, setPrevE] = useState(Number(0));
   const [backE, setBackE] = useState(false);
 
+  const [totalCand1Vote, setTotalCand1Vote] = useState(0);
+  const [totalCand2Vote, setTotalCand2Vote] = useState(0);
+  const [totalCand3Vote, setTotalCand3Vote] = useState(0);
+  const [totalCand4Vote, setTotalCand4Vote] = useState(0);
+  const [totalCand5Vote, setTotalCand5Vote] = useState(0);
+
   const [winner, setWinner] = useState();
   const [d, setD] = useState(Date.now());
 
@@ -31,23 +38,47 @@ export default function App() {
 
   const [button, setBut] = useState(false);
 
+  const [userId, setUserId] = useState(null);
   // const [liveTime, setTime] = useState();
-  const Completed = () => {
-    setStatus("Form has been closed");
-    setBut(true);
-    setWinner(Math.max(votesA, votesB, votesC, votesD, votesE));
+
+  const setData = async() => {
+
+    const res = await axios.get("http://127.0.0.1:3001/get_total_votes");
+    
+    let data =  res.data;
+
+    console.log("data", data.totalCand1Vote)
+      setTotalCand1Vote(data.totalCand1Vote);
+      setTotalCand2Vote(data.totalCand2Vote);
+      setTotalCand3Vote(data.totalCand3Vote);
+      setTotalCand4Vote(data.totalCand4Vote);
+      setTotalCand5Vote(data.totalCand5Vote);
+
+    Winner();
+  }
+
+  const Winner = () => {
+    setWinner(Math.max(totalCand1Vote, totalCand2Vote, totalCand3Vote, totalCand4Vote,totalCand5Vote));
     console.log(winner);
-    if (winner === votesA) {
+    if (winner === totalCand1Vote) {
       alert("Candidate A has won with " + winner + " votes.");
-    } else if (winner === votesB) {
+    } else if (winner === totalCand2Vote) {
       alert("Candidate B has won with " + winner + " votes.");
-    } else if (winner === votesC) {
+    } else if (winner === totalCand3Vote) {
       alert("Candidate C has won with " + winner + " votes.");
-    } else if (winner === votesD) {
+    } else if (winner === totalCand4Vote) {
       alert("Candidate D has won with " + winner + " votes.");
-    } else if (winner === votesE) {
+    } else if (winner === totalCand5Vote) {
       alert("Candidate E has won with " + winner + " votes.");
     }
+  }
+  const Completed = () => {
+    setStatus("Form has been closed. Wait for the results");
+    setBut(true);
+    
+    
+    setData();
+    
   };
 
   // Calculation of votes of all candidates - Qvoting
@@ -61,7 +92,7 @@ export default function App() {
 
   const inputCreditA = (e) => {
     var tar = Number(e.target.value);
-    if (tar == 0 && backA == true) {
+    if (tar === 0 && backA === true) {
       setReaminingCredits(Number(RemainingCredits) + Number(prevA));
       setBackA(false);
     } else if (RemainingCredits - tar ** 2 >= 0) {
@@ -78,7 +109,7 @@ export default function App() {
   };
   const inputCreditB = (e) => {
     var tar = Number(e.target.value);
-    if (tar == 0 && backB == true) {
+    if (tar === 0 && backB === true) {
       setReaminingCredits(Number(RemainingCredits) + Number(prevB));
       setBackB(false);
     } else if (RemainingCredits - tar ** 2 >= 0) {
@@ -95,7 +126,7 @@ export default function App() {
   };
   const inputCreditC = (e) => {
     var tar = Number(e.target.value);
-    if (tar == 0 && backC == true) {
+    if (tar === 0 && backC === true) {
       setReaminingCredits(Number(RemainingCredits) + Number(prevC));
       setBackC(false);
     } else if (RemainingCredits - tar ** 2 >= 0) {
@@ -112,7 +143,7 @@ export default function App() {
   };
   const inputCreditD = (e) => {
     var tar = Number(e.target.value);
-    if (tar == 0 && backD == true) {
+    if (tar === 0 && backD === true) {
       setReaminingCredits(Number(RemainingCredits) + Number(prevD));
       setBackD(false);
     } else if (RemainingCredits - tar ** 2 >= 0) {
@@ -129,7 +160,7 @@ export default function App() {
   };
   const inputCreditE = (e) => {
     var tar = Number(e.target.value);
-    if (tar == 0 && backE == true) {
+    if (tar === 0 && backE === true) {
       setReaminingCredits(Number(RemainingCredits) + Number(prevE));
       setBackE(false);
     } else if (RemainingCredits - tar ** 2 >= 0) {
@@ -146,6 +177,22 @@ export default function App() {
   };
 
   const checkQv = (event) => {
+
+    console.log("i'm posting the vote",candA,candB);
+    axios.post("http://127.0.0.1:3001/add_vote", {
+      "votes" : {
+        "id"       : userId.toString(),
+        "cand1vote": candA.toString(),
+        "cand2vote": candB.toString(),
+        "cand3vote": candC.toString(),
+        "cand4vote": candD.toString(),
+        "cand5vote": candE.toString()
+      }
+    })
+      .then(res => {
+        console.log("result",res);
+      }).catch(err => { console.log("error",err);})
+
     alert("Submitted!");
     setCandA(Number(0));
     setCandB(Number(0));
@@ -167,6 +214,19 @@ export default function App() {
   return (
     <div className="App">
       <h1> Quadratic Voting </h1>
+
+      <label>
+          {" "}
+          Enter User ID:
+          <input
+            type="number"
+            placeholder="id"
+            name="id"
+            value={userId}
+            onChange={(e) => setUserId(e.target.value) }
+          />
+      </label>
+
       <h4> Total Credits 20</h4>
       <h4> Remaining Credits {RemainingCredits}</h4>
       <h5> Please give credits to the following candidates:-</h5>
@@ -250,7 +310,7 @@ export default function App() {
       </form>
       <h3>{formCompletion}</h3>
       <div>
-        <Countdown date={d + 60000}>
+        <Countdown date={d + 30000}>
           <Completed />
         </Countdown>
       </div>
