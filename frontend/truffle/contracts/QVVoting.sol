@@ -52,13 +52,29 @@ contract QVVoting is Ownable, AccessControl {
     mapping(uint256 => Proposal) public Proposals;
     uint256 public ProposalCount;
 
-    function count() public view returns (uint256) {
-        return ProposalCount;
-    }
-
+    
+    address private Owner;
     constructor() public {
         symbol = "QVV";
         name = "QV Voting";
+        Owner=msg.sender;
+    }
+    function getDesc(uint256 proposalID) public view returns (string memory)
+    {
+        return Proposals[proposalID].description;
+    }
+
+    function checkAdmin() public view returns (bool)
+    {
+        if(msg.sender==Owner)
+        {
+            return true;
+        }
+        return false;
+    }
+
+    function count() public view returns (uint256) {
+        return ProposalCount;
     }
 
     /**

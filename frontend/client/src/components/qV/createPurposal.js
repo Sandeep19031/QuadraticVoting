@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import "./CreatePurposal.css";
+import "./createPurposal.css";
 import useEth from "../../contexts/EthContext/useEth";
 
 export default function CreatePurposal() {

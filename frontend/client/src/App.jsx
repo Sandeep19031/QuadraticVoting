@@ -2,15 +2,14 @@ import { EthProvider } from "./contexts/EthContext";
 import QV from "./components/qV/QV.js";
 import Demo from "./components/Demo";
 import "./App.css";
-import CreatePurposal from "./components/qV/CreatePurposal.js";
+import CreatePurposal from "./components/qV/createPurposal.js";
 import CastVote from "./components/qV/CastVote";
 
 function App() {
   return (
     <EthProvider>
-      <div id="App" >
+      <div id="App">
         <div className="container">
-         
           <Demo />
           <hr />
           <CreatePurposal />
