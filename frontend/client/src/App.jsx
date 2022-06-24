@@ -3,7 +3,7 @@ import QV from "./components/qV/QV.js";
 import Demo from "./components/Demo";
 import "./App.css";
 import CreatePurposal from "./components/qV/CreatePurposal.js";
-import CastVote from "./components/qV/CastVote";
+import LoadCastVote from "./components/qV/LoadCastVote";
 
 function App() {
   return (
@@ -15,8 +15,7 @@ function App() {
           <hr />
           <CreatePurposal />
           <hr />
-          <CastVote />
-          <hr />
+          <LoadCastVote />
           <QV />
         </div>
       </div>

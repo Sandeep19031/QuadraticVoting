@@ -1,14 +1,19 @@
-import React, { useState } from "react";
+import React, { useEffect, useReducer, useState } from "react";
 import "./CreatePurposal.css";
 import useEth from "../../contexts/EthContext/useEth";
+import {
+  reducer,
+  actions,
+  initialState,
+} from "../../contexts/EthContext/state";
 
 export default function CreatePurposal() {
   const [description, setDescription] = useState();
   const [expTime, setExpTime] = useState(0);
-  const [proposalID, setProposalID] = useState(0);
 
   const {
     state: { contract, accounts },
+    dispatch,
   } = useEth();
 
   const handleCreateButton = async () => {
@@ -21,7 +26,16 @@ export default function CreatePurposal() {
         "res proposal id",
         res.events.ProposalCreated.returnValues.ProposalID
       );
-      setProposalID(res.events.ProposalCreated.returnValues.ProposalID);
+
+      const proposalID = res.events.ProposalCreated.returnValues.ProposalID;
+      dispatch({
+        type: actions.createProposal,
+        data: { proposalID: proposalID },
+      });
+      dispatch({
+        type: actions.setDescription,
+        data: { description: description },
+      });
     } catch (err) {
       console.log("error", err);
     }

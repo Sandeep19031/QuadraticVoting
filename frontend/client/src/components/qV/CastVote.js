@@ -1,14 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./CastVote.css";
 import useEth from "../../contexts/EthContext/useEth";
 
 export default function CastVote() {
-  const [description, setDescription] = useState(
-    "Do you want to vote this candidate?"
-  );
-
   const {
-    state: { contract, accounts },
+    state: { contract, accounts, proposalID, description },
   } = useEth();
 
   const [voteBool, setVoteBool] = useState();
@@ -34,25 +30,21 @@ export default function CastVote() {
     console.log("mint res", mint);
     if (voteBool == "Yes") {
       const res = await contract.methods
-        .castVote(16, yesVote, true)
+        .castVote(proposalID, yesVote, true)
         .send({ from: accounts[0] });
 
       console.log("castvote res", res);
     } else if (voteBool == "No") {
       const res = await contract.methods
-        .castVote(1, noVote, false)
+        .castVote(proposalID, noVote, false)
         .send({ from: accounts[0] });
     }
   };
   return (
-    <div className="castVote">
-      <div className="descriptionContainer">
-        <h2>{description}</h2>
-      </div>
-
+    <div className="castVote" id={proposalID}>
       <div className="voteContainer">
-        <div className="candidate-name">
-          <p>CandidateA: </p>
+        <div className="descriptionContainer">
+          <h2>{description}</h2>
         </div>
 
         <div className="voteToCandidate">
