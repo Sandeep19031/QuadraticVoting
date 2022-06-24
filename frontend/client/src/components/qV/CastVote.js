@@ -30,7 +30,11 @@ export default function CastVote() {
     console.log("mint res", mint);
     if (voteBool == "Yes") {
       const res = await contract.methods
+<<<<<<< HEAD
         .castVote(proposalID, yesVote, true)
+=======
+        .castVote(1, yesVote, true)
+>>>>>>> f6e08abe85e8bdf9d78a1cf373e0602d77bf433d
         .send({ from: accounts[0] });
 
       console.log("castvote res", res);

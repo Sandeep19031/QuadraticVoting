@@ -8,9 +8,8 @@ import LoadCastVote from "./components/qV/LoadCastVote";
 function App() {
   return (
     <EthProvider>
-      <div id="App" >
+      <div id="App">
         <div className="container">
-         
           <Demo />
           <hr />
           <CreatePurposal />

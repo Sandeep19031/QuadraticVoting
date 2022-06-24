@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 import React, { useEffect, useReducer, useState } from "react";
 import "./CreatePurposal.css";
+=======
+import React, { useState } from "react";
+import "./createPurposal.css";
+>>>>>>> f6e08abe85e8bdf9d78a1cf373e0602d77bf433d
 import useEth from "../../contexts/EthContext/useEth";
 import {
   reducer,
