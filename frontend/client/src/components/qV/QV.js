@@ -3,7 +3,6 @@ import "./QV.css";
 import { useState } from "react";
 import Countdown from "react-countdown";
 
-
 export default function QV() {
   const [candA, setCandA] = useState(Number(0));
   const [prevA, setPrevA] = useState(Number(0));
@@ -41,9 +40,8 @@ export default function QV() {
   const [userId, setUserId] = useState(null);
   // const [liveTime, setTime] = useState();
 
-
   const Winner = () => {
-    setWinner(Math.max(votesA, votesB, votesC, votesD,votesE));
+    setWinner(Math.max(votesA, votesB, votesC, votesD, votesE));
     console.log(winner);
     if (winner === votesA) {
       alert("Candidate A has won with " + winner + " votes.");
@@ -56,12 +54,11 @@ export default function QV() {
     } else if (winner === votesE) {
       alert("Candidate E has won with " + winner + " votes.");
     }
-  }
+  };
   const Completed = () => {
     setStatus("Form has been closed. Wait for the results");
     setBut(true);
     Winner();
-    
   };
 
   // Calculation of votes of all candidates - Qvoting
@@ -160,9 +157,6 @@ export default function QV() {
   };
 
   const checkQv = (event) => {
-
-    
-
     alert("Submitted!");
     setCandA(Number(0));
     setCandB(Number(0));
@@ -186,15 +180,15 @@ export default function QV() {
       <h1> Quadratic Voting </h1>
 
       <label>
-          {" "}
-          Enter User ID:
-          <input
-            type="number"
-            placeholder="id"
-            name="id"
-            value={userId}
-            onChange={(e) => setUserId(e.target.value) }
-          />
+        {" "}
+        Enter User ID:
+        <input
+          type="number"
+          placeholder="id"
+          name="id"
+          value={userId}
+          onChange={(e) => setUserId(e.target.value)}
+        />
       </label>
 
       <h4> Total Credits 20</h4>
@@ -280,9 +274,9 @@ export default function QV() {
       </form>
       <h3>{formCompletion}</h3>
       <div>
-        <Countdown date={d + 30000}>
+        {/* <Countdown date={d + 30000}>
           <Completed />
-        </Countdown>
+        </Countdown> */}
       </div>
     </div>
   );

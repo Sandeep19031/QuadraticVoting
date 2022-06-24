@@ -2,6 +2,8 @@ import { EthProvider } from "./contexts/EthContext";
 import QV from "./components/qV/QV.js";
 import Demo from "./components/Demo";
 import "./App.css";
+import CreatePurposal from "./components/qV/CreatePurposal.js";
+import CastVote from "./components/qV/CastVote";
 
 function App() {
   return (
@@ -10,6 +12,10 @@ function App() {
         <div className="container">
          
           <Demo />
+          <hr />
+          <CreatePurposal />
+          <hr />
+          <CastVote />
           <hr />
           <QV />
         </div>

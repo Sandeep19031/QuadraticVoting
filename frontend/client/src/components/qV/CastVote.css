@@ -1,0 +1,41 @@
+.voteContainer {
+    display: flex;
+    justify-content: space-evenly;
+}
+.candidate-name {
+    width: 20%;
+}
+
+.voteToCandidate {
+    display: flex;
+    justify-content: space-between;
+    width: 50%;
+    align-items: center;
+}
+
+.castButton {
+    display:inline-block;
+    color:#444;
+    border:1px solid #CCC;
+    background:#DDD;
+    box-shadow: 0 0 5px -1px rgba(0,0,0,0.2);
+    cursor:pointer;
+    vertical-align:middle;
+    max-width: 100px;
+    max-height: fit-content;
+    padding: 5px;
+    text-align: center;
+    
+}
+.castButton:active {
+    color:red;
+    box-shadow: 0 0 5px -1px rgba(0,0,0,0.6);
+}
+.castButton > p {
+    line-height: 0px;
+}
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+    
+}
