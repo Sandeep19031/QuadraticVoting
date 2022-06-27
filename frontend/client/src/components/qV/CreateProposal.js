@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 import React, { useEffect, useReducer, useState } from "react";
-import "./CreatePurposal.css";
-=======
-import React, { useState } from "react";
-import "./createPurposal.css";
->>>>>>> f6e08abe85e8bdf9d78a1cf373e0602d77bf433d
+import "./CreateProposal.css";
 import useEth from "../../contexts/EthContext/useEth";
 import {
   reducer,
@@ -12,19 +7,23 @@ import {
   initialState,
 } from "../../contexts/EthContext/state";
 
-export default function CreatePurposal() {
+export default function CreateProposal() {
   const [description, setDescription] = useState();
   const [expTime, setExpTime] = useState(0);
-
+  const [optionsList, setOptionsList] = useState(
+    Array.from(new Array(4)).map((_) => "")
+  );
   const {
     state: { contract, accounts },
     dispatch,
   } = useEth();
 
+  useEffect(() => {});
   const handleCreateButton = async () => {
     try {
+      console.log("option list", optionsList);
       const res = await contract.methods
-        .createProposal(description, expTime)
+        .createProposal(description, optionsList, expTime)
         .send({ from: accounts[0] });
 
       console.log(
@@ -45,6 +44,51 @@ export default function CreatePurposal() {
       console.log("error", err);
     }
   };
+
+  const numberVariable = 4;
+  let arr = [];
+  for (let i = 0; i < numberVariable; i++) {
+    arr.push(i);
+  }
+  let initialState = {};
+
+  arr.forEach((element) => {
+    initialState[element] = "";
+  });
+
+  const [input, setInput] = useState(initialState);
+  let inputName = 0;
+
+  const handleUserInputChange = (e) => {
+    const name = e.target.name;
+    const newValue = e.target.value;
+    setInput({ [name]: newValue });
+    let newOptionsList = optionsList;
+    newOptionsList[name - 1] = newValue;
+    setOptionsList(newOptionsList);
+  };
+
+  const OptionInput = arr.map((number) => {
+    inputName++;
+    return (
+      <div className="options" key={number + 1}>
+        <div className="option-title">
+          <p>Option {number + 1} </p>
+        </div>
+        <div className="option-inputBox">
+          <input
+            type="text"
+            className="option-input"
+            placeholder="option"
+            value={input[inputName]}
+            name={inputName}
+            onChange={handleUserInputChange}
+          />
+        </div>
+      </div>
+    );
+  });
+
   return (
     <div className="createPurposal">
       <div className="title">
@@ -66,6 +110,8 @@ export default function CreatePurposal() {
           />
         </div>
       </div>
+
+      {OptionInput}
 
       <div className="expirationTime">
         <div className="expirationTime-title">

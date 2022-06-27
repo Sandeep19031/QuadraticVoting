@@ -5,90 +5,77 @@ import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/access/AccessControl.sol";
 
-/**
- * @title QVVoting
- * @dev the manager for proposals / votes
- */
-contract QVVoting is Ownable, AccessControl {
+contract Voting is Ownable, AccessControl {
     using SafeMath for uint256;
-
     uint256 private _totalSupply;
     string public symbol;
     string public name;
     mapping(address => uint256) private _balances;
+    uint256 public ProposalCount;
 
-    event VoteCasted(address voter, uint256 ProposalID, uint256 weight);
+    event VoteCasted(
+        address voter,
+        uint256 ProposalID,
+        uint256 weight,
+        uint256 optionNum
+    );
 
     event ProposalCreated(
         address creator,
-        uint256 ProposalID,
         string description,
+        string[] _options,
         uint256 votingTimeInHours
     );
 
+    struct Proposal {
+        address creator;
+        ProposalStatus status;
+        string description;
+        address[] voters;
+        uint256 expirationTime;
+        uint256 numOfOptions;
+        mapping(address => Voter) voterInfo;
+        mapping(uint256 => option) options;
+    }
     enum ProposalStatus {
         IN_PROGRESS,
         TALLY,
         ENDED
     }
-
-    struct Proposal {
-        address creator;
-        ProposalStatus status;
-        uint256 yesVotes;
-        uint256 noVotes;
-        string description;
-        address[] voters;
-        uint256 expirationTime;
-        mapping(address => Voter) voterInfo;
-    }
-
     struct Voter {
         bool hasVoted;
-        bool vote;
+        uint256 optionNum;
         uint256 weight;
     }
 
+    struct option {
+        string optionName;
+        uint256 totalWeight;
+    }
     mapping(uint256 => Proposal) public Proposals;
-    uint256 public ProposalCount;
 
-    
     address private Owner;
+
     constructor() public {
-        symbol = "QVV";
-        name = "QV Voting";
-        Owner=msg.sender;
-    }
-    function getDesc(uint256 proposalID) public view returns (string memory)
-    {
-        return Proposals[proposalID].description;
+        symbol = "V";
+        name = "Voting";
+        Owner = msg.sender;
     }
 
-    function checkAdmin() public view returns (bool)
-    {
-        if(msg.sender==Owner)
-        {
+    function checkAdmin() public view returns (bool) {
+        if (msg.sender == Owner) {
             return true;
         }
         return false;
     }
 
-    function count() public view returns (uint256) {
-        return ProposalCount;
-    }
-
-    /**
-     * @dev Creates a new proposal.
-     * @param _description the text of the proposal
-     * @param _voteExpirationTime expiration time in minutes
-     */
     function createProposal(
         string calldata _description,
+        string[] calldata _options,
         uint256 _voteExpirationTime
     ) external onlyOwner returns (uint256) {
         require(_voteExpirationTime > 0, "The voting period cannot be 0");
         ProposalCount++;
-
         Proposal storage curProposal = Proposals[ProposalCount];
         curProposal.creator = msg.sender;
         curProposal.status = ProposalStatus.IN_PROGRESS;
@@ -98,20 +85,23 @@ contract QVVoting is Ownable, AccessControl {
             _voteExpirationTime *
             1 seconds;
         curProposal.description = _description;
+        curProposal.numOfOptions = _options.length;
+        for (uint256 i = 0; i < _options.length; i++) {
+            curProposal.options[i + 1] = option({
+                optionName: _options[i],
+                totalWeight: 0
+            });
+        }
 
         emit ProposalCreated(
             msg.sender,
-            ProposalCount,
             _description,
+            _options,
             _voteExpirationTime
         );
         return ProposalCount;
     }
 
-    /**
-     * @dev sets a proposal to TALLY.
-     * @param _ProposalID the proposal id
-     */
     function setProposalToTally(uint256 _ProposalID)
         external
         validProposal(_ProposalID)
@@ -128,10 +118,6 @@ contract QVVoting is Ownable, AccessControl {
         Proposals[_ProposalID].status = ProposalStatus.TALLY;
     }
 
-    /**
-     * @dev sets a proposal to ENDED.
-     * @param _ProposalID the proposal id
-     */
     function setProposalToEnded(uint256 _ProposalID)
         external
         validProposal(_ProposalID)
@@ -148,10 +134,6 @@ contract QVVoting is Ownable, AccessControl {
         Proposals[_ProposalID].status = ProposalStatus.ENDED;
     }
 
-    /**
-     * @dev returns the status of a proposal
-     * @param _ProposalID the proposal id
-     */
     function getProposalStatus(uint256 _ProposalID)
         public
         view
@@ -161,10 +143,6 @@ contract QVVoting is Ownable, AccessControl {
         return Proposals[_ProposalID].status;
     }
 
-    /**
-     * @dev returns a proposal expiration time
-     * @param _ProposalID the proposal id
-     */
     function getProposalExpirationTime(uint256 _ProposalID)
         public
         view
@@ -174,43 +152,63 @@ contract QVVoting is Ownable, AccessControl {
         return Proposals[_ProposalID].expirationTime;
     }
 
-    /**
-     * @dev counts the votes for a proposal. Returns (yeays, nays)
-     * @param _ProposalID the proposal id
-     */
-    function countVotes(uint256 _ProposalID)
-        public
+    modifier validProposal(uint256 _ProposalID) {
+        require(
+            _ProposalID > 0 && _ProposalID <= ProposalCount,
+            "Not a valid Proposal Id"
+        );
+        _;
+    }
+
+    function userHasVoted(uint256 _ProposalID, address _user)
+        internal
         view
-        returns (uint256, uint256)
+        validProposal(_ProposalID)
+        returns (bool)
     {
-        uint256 yesVotes = 0;
-        uint256 noVotes = 0;
-
-        address[] memory voters = Proposals[_ProposalID].voters;
-        for (uint256 i = 0; i < voters.length; i++) {
-            address voter = voters[i];
-            bool vote = Proposals[_ProposalID].voterInfo[voter].vote;
-            uint256 weight = Proposals[_ProposalID].voterInfo[voter].weight;
-            if (vote == true) {
-                yesVotes += weight;
-            } else {
-                noVotes += weight;
-            }
-        }
-
-        return (yesVotes, noVotes);
+        return (Proposals[_ProposalID].voterInfo[_user].hasVoted);
     }
 
     /**
-     * @dev casts a vote.
+     * @dev to get winner of poll.
      * @param _ProposalID the proposal id
-     * @param numTokens number of voice credits
-     * @param _vote true for yes, false for no
+     * returns index of options, total weight of option and name of option
      */
+
+    function countVotes(uint256 _ProposalID)
+        public
+        view
+        returns (
+            uint256,
+            uint256,
+            string memory
+        )
+    {
+        uint256 len = Proposals[_ProposalID].numOfOptions;
+        uint256 maxWeight;
+        uint256 index;
+        for (uint256 i = 1; i < len; i++) {
+            if (Proposals[_ProposalID].options[i].totalWeight >= maxWeight) {
+                maxWeight = Proposals[_ProposalID].options[i].totalWeight;
+                index = i;
+            }
+        }
+        string memory n = Proposals[_ProposalID].options[index].optionName;
+        return (index, maxWeight, n);
+    }
+
+    function getWeight(uint256 _ProposalID, uint256 optionNum)
+        public
+        view
+        returns (uint256)
+    {
+        return Proposals[_ProposalID].options[optionNum].totalWeight;
+    }
+
     function castVote(
         uint256 _ProposalID,
         uint256 numTokens,
-        bool _vote
+        uint256 _optionNum
     ) external validProposal(_ProposalID) {
         require(
             getProposalStatus(_ProposalID) == ProposalStatus.IN_PROGRESS,
@@ -233,45 +231,16 @@ contract QVVoting is Ownable, AccessControl {
 
         curproposal.voterInfo[msg.sender] = Voter({
             hasVoted: true,
-            vote: _vote,
+            optionNum: _optionNum,
             weight: weight
         });
+        curproposal.options[_optionNum].totalWeight += weight;
 
         curproposal.voters.push(msg.sender);
 
-        emit VoteCasted(msg.sender, _ProposalID, weight);
+        emit VoteCasted(msg.sender, _ProposalID, weight, _optionNum);
     }
 
-    /**
-     * @dev checks if a user has voted
-     * @param _ProposalID the proposal id
-     * @param _user the address of a voter
-     */
-    function userHasVoted(uint256 _ProposalID, address _user)
-        internal
-        view
-        validProposal(_ProposalID)
-        returns (bool)
-    {
-        return (Proposals[_ProposalID].voterInfo[_user].hasVoted);
-    }
-
-    /**
-     * @dev checks if a proposal id is valid
-     * @param _ProposalID the proposal id
-     */
-    modifier validProposal(uint256 _ProposalID) {
-        require(
-            _ProposalID > 0 && _ProposalID <= ProposalCount,
-            "Not a valid Proposal Id"
-        );
-        _;
-    }
-
-    /**
-     * @dev returns the square root (in int) of a number
-     * @param x the number (int)
-     */
     function sqrt(uint256 x) internal pure returns (uint256 y) {
         uint256 z = (x + 1) / 2;
         y = x;

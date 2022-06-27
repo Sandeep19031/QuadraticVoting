@@ -10,6 +10,7 @@ const initialState = {
   accounts: null,
   networkID: null,
   contract: null,
+  isAdmin: null,
   proposalID: null,
   description: null,
 };
