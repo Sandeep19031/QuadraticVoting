@@ -18,12 +18,13 @@ export default function AdminOrVoter() {
       const fethAdminInfo = async () => {
         res = await contract.methods.checkAdmin().send({ from: accounts[0] });
         setIsAdmin(res.status);
+        console.log("checkAdmin fucntion", res.status);
         localStorage.setItem("isAdmin", JSON.stringify(isAdmin));
       };
 
       fethAdminInfo();
     }
-  }, [accounts]);
+  }, []);
 
   if (isAdmin) {
     return <AdminPage />;

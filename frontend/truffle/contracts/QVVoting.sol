@@ -143,6 +143,20 @@ contract Voting is Ownable, AccessControl {
         return Proposals[_ProposalID].status;
     }
 
+    function getDetails(uint256 _ProposalID)
+        external
+        view
+        returns (string memory, string[] memory)
+    {
+        string[] memory _options = new string[](
+            Proposals[_ProposalID].numOfOptions
+        );
+        for (uint256 i = 1; i <= Proposals[_ProposalID].numOfOptions; i++) {
+            _options[i - 1] = Proposals[_ProposalID].options[i].optionName;
+        }
+        return (Proposals[_ProposalID].description, _options);
+    }
+
     function getProposalExpirationTime(uint256 _ProposalID)
         public
         view

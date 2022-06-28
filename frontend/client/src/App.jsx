@@ -5,6 +5,7 @@ import "./App.css";
 import LoadCastVote from "./components/qV/LoadCastVote";
 import AdminOrVoter from "./AdminOrVoter";
 import CreateProposal from "./components/qV/CreateProposal.js";
+import CastVote from "./components/qV/CastVote";
 
 function App() {
 
@@ -13,7 +14,7 @@ function App() {
       <div id="App">
         <div className="container">
           
-          <AdminOrVoter />
+          <CastVote />
         </div>
       </div>
     </EthProvider>

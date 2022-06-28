@@ -13,7 +13,7 @@
     align-items: center;
 }
 
-.castButton {
+.castButton, .proposalIDSubmitButton {
     display:inline-block;
     color:#444;
     border:1px solid #CCC;
@@ -31,8 +31,21 @@
     color:red;
     box-shadow: 0 0 5px -1px rgba(0,0,0,0.6);
 }
-.castButton > p {
+.castButton > p, .proposalIDSubmitButton > p {
     line-height: 0px;
+}
+
+.proposaIDInput {
+    display: flex;
+    justify-content: space-evenly;
+}
+.proposalIDInputBox {
+    display: flex;
+    align-items: center;
+}
+.proposalIDButton-container {
+    display: flex;
+    align-items: center;
 }
 .button-container {
     display: flex;

@@ -26,20 +26,17 @@ export default function CreateProposal() {
         .createProposal(description, optionsList, expTime)
         .send({ from: accounts[0] });
 
-      console.log(
-        "res proposal id",
-        res.events.ProposalCreated.returnValues.ProposalID
-      );
+      console.log("res proposal id", res);
 
-      const proposalID = res.events.ProposalCreated.returnValues.ProposalID;
-      dispatch({
-        type: actions.createProposal,
-        data: { proposalID: proposalID },
-      });
-      dispatch({
-        type: actions.setDescription,
-        data: { description: description },
-      });
+      // const proposalID = res.events.ProposalCreated.returnValues.ProposalID;
+      // dispatch({
+      //   type: actions.createProposal,
+      //   data: { proposalID: proposalID },
+      // });
+      // dispatch({
+      //   type: actions.setDescription,
+      //   data: { description: description },
+      // });
     } catch (err) {
       console.log("error", err);
     }
