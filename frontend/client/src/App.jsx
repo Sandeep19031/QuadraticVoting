@@ -13,7 +13,8 @@ function App() {
     <EthProvider>
       <div id="App">
         <div className="container">
-          
+          <CreateProposal />
+          <hr />
           <CastVote />
         </div>
       </div>

@@ -50,6 +50,45 @@ export default function CastVote() {
     }
   };
 
+  const VoteContainer = () => {
+    return (
+      <div className="voteContainer">
+        <div className="descriptionContainer">
+          <h2>{description}</h2>
+        </div>
+
+        <div className="voteToCandidate">
+          <div className="radioClass" onChange={handleRadioButton}>
+            <input type="radio" value="Yes" name="vote" /> Yes
+            <input type="radio" value="No" name="vote" /> No
+          </div>
+
+          {voteBool == "Yes" ? (
+            <div className="voteInputBoxYes">
+              <input
+                type="number"
+                value={yesVote}
+                placeholder="Vote"
+                min={0}
+                onChange={handleVoteInputYes}
+              />
+            </div>
+          ) : (
+            <div className="voteInputBoxNo">
+              <input
+                type="number"
+                value={noVote}
+                placeholder="Vote"
+                min={0}
+                onChange={handleVoteInputNo}
+              />
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   const CastVoteContainer = () => {
     return (
       <div className="castVote" id={proposalID}>
@@ -57,7 +96,7 @@ export default function CastVote() {
         <div className="proposalInfo">
           <div className="proposalStatus"></div>
         </div>
-
+        <VoteContainer />
         <div className="button-container">
           <div className="castButton" onClick={handleCasteButton}>
             <p>CAST</p>

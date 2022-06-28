@@ -77,7 +77,7 @@ export default function CreateProposal() {
             type="text"
             className="option-input"
             placeholder="option"
-            value={input[inputName]}
+            value={optionsList[inputName - 1]}
             name={inputName}
             onChange={handleUserInputChange}
           />
