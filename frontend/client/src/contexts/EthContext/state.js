@@ -2,6 +2,7 @@ const actions = {
   init: "INIT",
   createProposal: "CREATE_PROPOSAL",
   setDescription: "SET_DESCRIPTION",
+  setCredits: "SET_CREDITS",
 };
 
 const initialState = {
@@ -13,6 +14,7 @@ const initialState = {
   isAdmin: null,
   proposalID: null,
   description: null,
+  credits: null,
 };
 
 const reducer = (state, action) => {
@@ -25,6 +27,9 @@ const reducer = (state, action) => {
       return { ...state, ...data };
 
     case actions.setDescription:
+      return { ...state, ...data };
+
+    case actions.setCredits:
       return { ...state, ...data };
     default:
       throw new Error("Undefined reducer action type");

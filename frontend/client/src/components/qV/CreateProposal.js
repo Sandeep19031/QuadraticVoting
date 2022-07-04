@@ -6,19 +6,23 @@ import {
   actions,
   initialState,
 } from "../../contexts/EthContext/state";
+import { toast } from "react-toastify/dist/react-toastify";
 
 export default function CreateProposal() {
   const [description, setDescription] = useState();
   const [expTime, setExpTime] = useState(0);
+  const [noOfOptions, setNoOfOptions] = useState();
   const [optionsList, setOptionsList] = useState(
-    Array.from(new Array(4)).map((_) => "")
+    Array.from(new Array(noOfOptions)).map((_) => "")
   );
+
   const {
     state: { contract, accounts },
     dispatch,
   } = useEth();
 
   useEffect(() => {});
+
   const handleCreateButton = async () => {
     try {
       console.log("option list", optionsList);
@@ -27,24 +31,15 @@ export default function CreateProposal() {
         .send({ from: accounts[0] });
 
       console.log("res proposal id", res);
-
-      // const proposalID = res.events.ProposalCreated.returnValues.ProposalID;
-      // dispatch({
-      //   type: actions.createProposal,
-      //   data: { proposalID: proposalID },
-      // });
-      // dispatch({
-      //   type: actions.setDescription,
-      //   data: { description: description },
-      // });
+      toast.success("Successfully Created..");
     } catch (err) {
       console.log("error", err);
+      toast.error("Error in Creating Proposal !!");
     }
   };
 
-  const numberVariable = 4;
   let arr = [];
-  for (let i = 0; i < numberVariable; i++) {
+  for (let i = 0; i < noOfOptions; i++) {
     arr.push(i);
   }
   let initialState = {};
@@ -59,9 +54,10 @@ export default function CreateProposal() {
   const handleUserInputChange = (e) => {
     const name = e.target.name;
     const newValue = e.target.value;
-    setInput({ [name]: newValue });
+
     let newOptionsList = optionsList;
     newOptionsList[name - 1] = newValue;
+    setInput({ [name]: newValue });
     setOptionsList(newOptionsList);
   };
 
@@ -108,6 +104,20 @@ export default function CreateProposal() {
         </div>
       </div>
 
+      <div className="noOfOptions">
+        <div className="noOfOptions-title">
+          <p>Total Options: </p>
+        </div>
+        <div className="noOfOptions-inputBox">
+          <input
+            type="number"
+            className="noOfOptions-input"
+            placeholder="Options"
+            value={noOfOptions}
+            onChange={(e) => setNoOfOptions(e.target.value)}
+          />
+        </div>
+      </div>
       {OptionInput}
 
       <div className="expirationTime">

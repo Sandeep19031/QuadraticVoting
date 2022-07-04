@@ -13,12 +13,7 @@ contract Voting is Ownable, AccessControl {
     mapping(address => uint256) private _balances;
     uint256 public ProposalCount;
 
-    event VoteCasted(
-        address voter,
-        uint256 ProposalID,
-        uint256 weight,
-        uint256 optionNum
-    );
+    event VoteCasted(address voter, uint256 ProposalID, uint256[] _tokens);
 
     event ProposalCreated(
         address creator,
@@ -44,8 +39,7 @@ contract Voting is Ownable, AccessControl {
     }
     struct Voter {
         bool hasVoted;
-        uint256 optionNum;
-        uint256 weight;
+        uint256[] _tokens;
     }
 
     struct option {
@@ -118,6 +112,20 @@ contract Voting is Ownable, AccessControl {
         Proposals[_ProposalID].status = ProposalStatus.TALLY;
     }
 
+    function getDetails(uint256 _ProposalID)
+        external
+        view
+        returns (string memory, string[] memory)
+    {
+        string[] memory _options = new string[](
+            Proposals[_ProposalID].numOfOptions
+        );
+        for (uint256 i = 1; i <= Proposals[_ProposalID].numOfOptions; i++) {
+            _options[i - 1] = Proposals[_ProposalID].options[i].optionName;
+        }
+        return (Proposals[_ProposalID].description, _options);
+    }
+
     function setProposalToEnded(uint256 _ProposalID)
         external
         validProposal(_ProposalID)
@@ -141,20 +149,6 @@ contract Voting is Ownable, AccessControl {
         returns (ProposalStatus)
     {
         return Proposals[_ProposalID].status;
-    }
-
-    function getDetails(uint256 _ProposalID)
-        external
-        view
-        returns (string memory, string[] memory)
-    {
-        string[] memory _options = new string[](
-            Proposals[_ProposalID].numOfOptions
-        );
-        for (uint256 i = 1; i <= Proposals[_ProposalID].numOfOptions; i++) {
-            _options[i - 1] = Proposals[_ProposalID].options[i].optionName;
-        }
-        return (Proposals[_ProposalID].description, _options);
     }
 
     function getProposalExpirationTime(uint256 _ProposalID)
@@ -201,7 +195,7 @@ contract Voting is Ownable, AccessControl {
         uint256 len = Proposals[_ProposalID].numOfOptions;
         uint256 maxWeight;
         uint256 index;
-        for (uint256 i = 1; i < len; i++) {
+        for (uint256 i = 1; i <= len; i++) {
             if (Proposals[_ProposalID].options[i].totalWeight >= maxWeight) {
                 maxWeight = Proposals[_ProposalID].options[i].totalWeight;
                 index = i;
@@ -219,11 +213,10 @@ contract Voting is Ownable, AccessControl {
         return Proposals[_ProposalID].options[optionNum].totalWeight;
     }
 
-    function castVote(
-        uint256 _ProposalID,
-        uint256 numTokens,
-        uint256 _optionNum
-    ) external validProposal(_ProposalID) {
+    function castVote(uint256 _ProposalID, uint256[] memory _tokens)
+        external
+        validProposal(_ProposalID)
+    {
         require(
             getProposalStatus(_ProposalID) == ProposalStatus.IN_PROGRESS,
             "proposal has expired."
@@ -236,23 +229,23 @@ contract Voting is Ownable, AccessControl {
             getProposalExpirationTime(_ProposalID) > block.timestamp,
             "for this proposal, the voting time expired"
         );
-
-        _balances[msg.sender] = _balances[msg.sender].sub(numTokens);
-
-        uint256 weight = sqrt(numTokens); // QV Vote
-
         Proposal storage curproposal = Proposals[_ProposalID];
+        uint256 total = 0;
+        for (uint256 i = 1; i <= _tokens.length; i++) {
+            curproposal.options[i].totalWeight += _tokens[i - 1];
+            total = total + (_tokens[i - 1] * _tokens[i - 1]);
+        }
+
+        _balances[msg.sender] = _balances[msg.sender].sub(total);
 
         curproposal.voterInfo[msg.sender] = Voter({
             hasVoted: true,
-            optionNum: _optionNum,
-            weight: weight
+            _tokens: _tokens
         });
-        curproposal.options[_optionNum].totalWeight += weight;
 
         curproposal.voters.push(msg.sender);
 
-        emit VoteCasted(msg.sender, _ProposalID, weight, _optionNum);
+        emit VoteCasted(msg.sender, _ProposalID, _tokens);
     }
 
     function sqrt(uint256 x) internal pure returns (uint256 y) {

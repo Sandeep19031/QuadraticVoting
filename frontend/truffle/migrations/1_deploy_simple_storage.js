@@ -1,5 +1,5 @@
-const QVVoting = artifacts.require("QVVoting");
+const Voting = artifacts.require("Voting");
 
 module.exports = function (deployer) {
-  deployer.deploy(QVVoting);
+  deployer.deploy(Voting);
 };
