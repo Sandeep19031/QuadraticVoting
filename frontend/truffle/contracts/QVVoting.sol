@@ -96,6 +96,10 @@ contract Voting is Ownable, AccessControl {
         return ProposalCount;
     }
 
+    function getProposalCount() public view returns (uint256) {
+        return ProposalCount;
+    }
+
     function setProposalToTally(uint256 _ProposalID)
         external
         validProposal(_ProposalID)
@@ -115,7 +119,12 @@ contract Voting is Ownable, AccessControl {
     function getDetails(uint256 _ProposalID)
         external
         view
-        returns (string memory, string[] memory)
+        returns (
+            string memory,
+            string[] memory,
+            uint256,
+            ProposalStatus
+        )
     {
         string[] memory _options = new string[](
             Proposals[_ProposalID].numOfOptions
@@ -123,7 +132,12 @@ contract Voting is Ownable, AccessControl {
         for (uint256 i = 1; i <= Proposals[_ProposalID].numOfOptions; i++) {
             _options[i - 1] = Proposals[_ProposalID].options[i].optionName;
         }
-        return (Proposals[_ProposalID].description, _options);
+        return (
+            Proposals[_ProposalID].description,
+            _options,
+            Proposals[_ProposalID].expirationTime,
+            Proposals[_ProposalID].status
+        );
     }
 
     function setProposalToEnded(uint256 _ProposalID)
@@ -169,7 +183,7 @@ contract Voting is Ownable, AccessControl {
     }
 
     function userHasVoted(uint256 _ProposalID, address _user)
-        internal
+        public
         view
         validProposal(_ProposalID)
         returns (bool)

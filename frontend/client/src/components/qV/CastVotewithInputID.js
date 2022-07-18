@@ -1,20 +1,18 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import "./CastVote.css";
 import useEth from "../../contexts/EthContext/useEth";
+import { toast } from "react-toastify/dist/react-toastify";
 import Countdown, { zeroPad } from "react-countdown";
 import Winner from "./Winner";
-import { useLocation } from "react-router-dom";
-import toast from "cogo-toast";
+import { ToastBar } from "react-hot-toast";
 
 export default function CastVote() {
-  const location = useLocation();
-
-  const proposalID = location.state.proposalID;
-  const description = location.state.description;
-  const noOfOptions = location.state.noOfOptions;
-  const optionsList = location.state.optionsList;
-  const expTime = location.state.expirationTime;
-  const proposalStatus = location.state.proposalStatus;
+  const [proposalID, setProposalID] = useState(0);
+  const [description, setDescription] = useState();
+  const [noOfOptions, setNoOfOptions] = useState();
+  const [optionsList, setOptionsList] = useState([]);
+  const [expTime, setExpTime] = useState();
+  const [proposalStatus, setProposalStatus] = useState();
 
   const {
     state: { contract, accounts },
@@ -24,50 +22,45 @@ export default function CastVote() {
   const [totalCredits, setTotalCredits] = useState();
   const [subQuantity, setSubQuantity] = useState(Number(0));
   const [isComplete, setIsComplete] = useState(false);
-  const [voted, setVoted] = useState();
+
   const [votesList, setVotesList] = useState(
     Array.from(new Array(noOfOptions))
   );
-  const [update, setUpdate] = useState(false);
+
   let arr = [];
   for (let i = 1; i <= noOfOptions; i++) {
     arr.push(i);
   }
-  useEffect(() => {
-    const getRemainingCredits = async () => {
-      try {
-        const credits = await contract.methods.balanceOf(accounts[0]).call();
-        console.log("res from balanceOf", credits);
-        setRemainingCredits(Number(credits));
-        setTotalCredits(Number(credits));
-      } catch (err) {
-        console.log("error in fetching proposal!");
-      }
-    };
+  async function handleProposalIDSubmitButton() {
+    try {
+      const res = await contract.methods
+        .getDetails(proposalID)
+        .call({ from: accounts[0] });
+      console.log("getDetails()", res);
+      setDescription(res[0]);
+      setOptionsList(res[1]);
+      setNoOfOptions(res[1].length);
 
-    const checkVoted = async () => {
-      try {
-        const v = await contract.methods
-          .userHasVoted(proposalID, accounts[0])
-          .call();
-        console.log("user voted", v);
-        setVoted(v);
-      } catch (err) {
-        console.log("user voted err", err);
-      }
-    };
+      const getExpTime = await contract.methods
+        .getProposalExpirationTime(proposalID)
+        .call();
+      setExpTime(getExpTime);
+      console.log("exp time", getExpTime);
 
-    const fetchData = async () => {
-      if (remainingCredits === undefined && contract !== null) {
-        await getRemainingCredits();
-      }
-      if (voted === undefined && contract !== null) {
-        await checkVoted();
-      }
-    };
-    fetchData();
-  });
+      const getProposalStatus = await contract.methods
+        .getProposalStatus(proposalID)
+        .call();
+      setProposalStatus(getProposalStatus);
+      console.log("proposal status", getProposalStatus);
 
+      const credits = await contract.methods.balanceOf(accounts[0]).call();
+      console.log("res from balanceOf", credits);
+      setRemainingCredits(Number(credits));
+      setTotalCredits(Number(credits));
+    } catch (err) {
+      console.log("error in fetching proposal!");
+    }
+  }
   const handleCasteButton = async () => {
     console.log("votesList", votesList);
 
@@ -82,7 +75,6 @@ export default function CastVote() {
       console.log("res from castVote", res);
       if (res) {
         toast.success("Your votes are successfully casted ...");
-        setVoted(true);
       }
     } catch (err) {
       //toast.err("Error in Vote Casting !!");
@@ -92,10 +84,6 @@ export default function CastVote() {
   };
 
   const handleVoteInput = (e, index) => {
-    if (isComplete) {
-      toast.error("Proposal is ended..");
-      return (e.target.value = null);
-    }
     let name = e.target.name;
     let newValue = e.target.value;
     let sQ = newValue * newValue;
@@ -107,11 +95,9 @@ export default function CastVote() {
       "sQ",
       sQ,
       "remaing credit",
-      remainingCredits,
-      "totalCredits",
-      totalCredits
+      remainingCredits
     );
-    if (totalCredits === 0 || totalCredits === null) {
+    if (totalCredits === 0) {
       toast.error("You don't have credits to vote..");
       return (e.target.value = null);
     }
@@ -172,7 +158,6 @@ export default function CastVote() {
         <br />
         <div className="proposalInfo">
           <h2>{description}</h2>
-          <p></p>
         </div>
         {VoteContainerList}
         <div className="button-container">
@@ -189,33 +174,58 @@ export default function CastVote() {
     if (completed) {
       // Render a completed state
       setIsComplete(true);
+      return;
+    } else {
+      // Render a countdown
+      return (
+        <span>
+          Timme-Left {zeroPad(hours)}:{zeroPad(minutes)}:{zeroPad(seconds)}
+        </span>
+      );
     }
-    // Render a countdown
-    return (
-      <span>
-        Time-Left {zeroPad(hours)}:{zeroPad(minutes)}:{zeroPad(seconds)}
-      </span>
-    );
   };
 
   return (
     <div>
-      <div className="creditsLeft">
-        <p style={{ fontSize: "20px" }}>
-          Remaining credits: {remainingCredits}
-        </p>
+      <div className="proposaIDInput">
+        <div>
+          <p>Enter ProposalID</p>
+        </div>
+        <div className="proposalIDInputBox">
+          <div className="wrapper">
+            <input
+              type="number"
+              name="proposalIDInput-input"
+              className="proposalID-input"
+              value={proposalID}
+              onChange={(e) => setProposalID(e.target.value)}
+            />
+          </div>
+        </div>
+        <div className="proposalIDButton-container">
+          <div
+            className="proposalIDSubmitButton"
+            onClick={handleProposalIDSubmitButton}
+          >
+            <p>SUBMIT</p>
+          </div>
+        </div>
       </div>
 
-      <Countdown date={expTime * 1000} renderer={renderer} />
+      <div className="proposalStatus">
+        <p>Proposal Status: {proposalStatus}</p>
+      </div>
+      <div className="creditsLeft">
+        <p>Remaining credits: {remainingCredits}</p>
+      </div>
 
-      {CastVoteContainer()}
-      {!isComplete && voted ? (
-        <p>
-          <b>Waiting for result...</b>
-        </p>
+      {expTime ? (
+        <Countdown date={expTime * 1000} renderer={renderer} />
       ) : (
         <></>
       )}
+
+      {proposalID && description ? CastVoteContainer() : <></>}
 
       {isComplete && (
         <Winner proposaID={proposalID} optionsList={optionsList} />

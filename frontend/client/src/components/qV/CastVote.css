@@ -1,3 +1,7 @@
+.descriptionContainer{
+    display: flex;
+    align-items: center;
+}
 .voteContainer {
     display: flex;
     justify-content: space-evenly;

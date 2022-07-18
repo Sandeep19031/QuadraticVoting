@@ -26,7 +26,6 @@ export default function Winner({ proposaID, optionsList }) {
         for (let i = 0; i < optionsList.length; i++) {
           const res = await contract.methods.getWeight(proposaID, i + 1).call();
           totalVotesList[i] = res;
-          setTotalVotesObject({ [i + 1]: res });
           setTotalVotesList(totalVotesList);
           console.log("res from total votes", totalVotesList);
         }
@@ -34,7 +33,6 @@ export default function Winner({ proposaID, optionsList }) {
         console.log("Error in fetching total votes", err);
       }
     };
-    fetchTotalVotes();
 
     const getWinner = async () => {
       try {
@@ -47,24 +45,31 @@ export default function Winner({ proposaID, optionsList }) {
         console.log("error in getWinner", err);
       }
     };
-    getWinner();
-    setIsComplete(true);
-  }, [totalVotesList]);
+
+    const fetchData = async () => {
+      await fetchTotalVotes();
+      await getWinner();
+      setIsComplete(true);
+    };
+
+    fetchData();
+  });
 
   if (isComplete && totalVotesList.length === optionsList.length) {
     return (
       <div className="winner">
-        <p> Total Votes: </p>
+        <p></p>
+        <h4> Result: </h4>
         {totalVotesList.map((vote, i) => {
           return (
             <p>
-              Total votes for {optionsList[i]} is {vote}
+              {optionsList[i]} = {vote} votes
             </p>
           );
         })}
         {winnerName ? (
           <p>
-            Winner is {winnerName} with {winnerVotes} votes.
+            Winner is <b>{winnerName}</b> with <b>{winnerVotes}</b> votes.
           </p>
         ) : (
           <p> Waiting for winner</p>

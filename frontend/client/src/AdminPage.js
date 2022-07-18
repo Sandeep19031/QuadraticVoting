@@ -1,8 +1,8 @@
-import React from "react";
-import CastVote from "./components/qV/CastVote";
+import React, { useEffect } from "react";
 import CreateProposal from "./components/qV/CreateProposal";
-import LoadCastVote from "./components/qV/LoadCastVote";
 import Mint from "./components/qV/Mint";
+import ProposalList from "./components/qV/ProposalList";
+import toast from "cogo-toast";
 
 export default function AdminPage() {
   return (
@@ -11,7 +11,7 @@ export default function AdminPage() {
       <hr />
       <Mint />
       <hr />
-      <CastVote />
+      <ProposalList />
     </div>
   );
 }

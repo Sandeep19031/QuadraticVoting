@@ -1,7 +1,6 @@
 import React from "react";
-import CastVote from "./components/qV/CastVote";
-import LoadCastVote from "./components/qV/LoadCastVote";
+import ProposalList from "./components/qV/ProposalList";
 
 export default function VoterPage() {
-  return <CastVote />;
+  return <ProposalList />;
 }

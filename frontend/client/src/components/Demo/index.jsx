@@ -5,7 +5,7 @@ import Cta from "./Cta";
 import Contract from "./Contract";
 import ContractBtns from "./ContractBtns";
 import Desc from "./Desc";
-import NoticeNoArtifact from "./NoticeNoArtifact";
+import NoticeNoArtifact from "../qV/NoticeNoArtifact";
 import NoticeWrongNetwork from "./NoticeWrongNetwork";
 
 function Demo() {

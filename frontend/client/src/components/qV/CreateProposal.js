@@ -1,12 +1,8 @@
 import React, { useEffect, useReducer, useState } from "react";
 import "./CreateProposal.css";
 import useEth from "../../contexts/EthContext/useEth";
-import {
-  reducer,
-  actions,
-  initialState,
-} from "../../contexts/EthContext/state";
-import { toast } from "react-toastify/dist/react-toastify";
+
+import toast from "cogo-toast";
 
 export default function CreateProposal() {
   const [description, setDescription] = useState();
@@ -18,7 +14,6 @@ export default function CreateProposal() {
 
   const {
     state: { contract, accounts },
-    dispatch,
   } = useEth();
 
   useEffect(() => {});
@@ -30,10 +25,9 @@ export default function CreateProposal() {
         .createProposal(description, optionsList, expTime)
         .send({ from: accounts[0] });
 
-      console.log("res proposal id", res);
       toast.success("Successfully Created..");
     } catch (err) {
-      console.log("error", err);
+      console.log(err);
       toast.error("Error in Creating Proposal !!");
     }
   };

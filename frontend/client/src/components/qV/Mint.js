@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import toast from "react-hot-toast";
+import toast from "cogo-toast";
 import { useEth } from "../../contexts/EthContext";
 import "./Mint.css";
 
@@ -15,6 +15,8 @@ export default function Mint() {
       const res = await contract.methods
         .mint(account, credit)
         .send({ from: accounts[0] });
+
+      toast.success("Minted");
     } catch (err) {
       console.log("err in mint function", err);
     }
